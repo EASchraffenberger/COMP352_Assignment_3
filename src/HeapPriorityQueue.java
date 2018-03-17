@@ -1,4 +1,3 @@
-
 public class HeapPriorityQueue 
 {
 	//inner class: entry
@@ -69,26 +68,34 @@ public class HeapPriorityQueue
 	{
 		this.heapType = thisHeapType;
 		this.heap = new Entry[keyArray.length];
-		for(int index = 0; index < Math.min(keyArray.length, valueArray.length); index++)
+		for(int i = 0; i < this.heap.length; i++)
 		{
-			this.heap[index] = new Entry(keyArray[index], valueArray[index]);
+			this.heap[i] = new Entry(keyArray[i], valueArray[i]);
 		}
 		heapify();
+	}
+	
+	//printheap prints to screen the key and value elements of the heap, starting
+	//from index 0 to the last index
+	public void printHeap()
+	{
+		System.out.println("key     value");
+		
+		for(int i = 0; i < this.heap.length; i++)
+		{
+			System.out.println(this.heap[i].getKey() + "     " + this.heap[i].getValue());
+		}
+		System.out.println();
 	}
 	
 	//heapify sorts entire heap via downheap
 	public void heapify()
 	{
-		int initialIndex = 0;
-		if(parentIndex(this.heap.length-1) > 0)
+		int initialIndex = parentIndex(this.heap.length-1);	
+		while(initialIndex >= 0)
 		{
-			initialIndex = parentIndex(this.heap.length-1);
-		}
-		System.out.println("in heapify(), initialIndex is " + initialIndex 
-				+ "and the parent of this.heap.length is " + parentIndex(this.heap.length-1));
-		for(int i = initialIndex; i >= 0; i--)
-		{
-			downheap(i);
+			downheap(initialIndex);
+			initialIndex--;
 		}
 	}
 	
@@ -106,10 +113,23 @@ public class HeapPriorityQueue
 		oldHeap = temp;
 	}
 	
+	//isFull returns true if the last entry in the heap is not null, false otherwise
+	public boolean isFull()
+	{
+		if(this.heap[heap.length-1] != null)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	//parentIndex method returns index of parent of entry at index "index"
 	public int parentIndex(int index)
 	{
-		return (index-1)*2;
+		return (index-1)/2;
 	}
 	
 	//leftChildIndex method returns index of left child of entry at index "index"
@@ -128,9 +148,8 @@ public class HeapPriorityQueue
 	//false otherwise
 	public boolean hasLeftChild(int index)
 	{
-		System.out.println("in hasLeftChild, leftChildIndex is " + this.leftChildIndex(index));
 		
-		if(this.leftChildIndex(index) > heap.length || heap.length == 1)
+		if(this.leftChildIndex(index) > (this.heap.length -1) || heap.length == 1)
 		{
 			return false;
 		}
@@ -148,17 +167,30 @@ public class HeapPriorityQueue
 	//false otherwise
 	public boolean hasRightChild(int index)
 	{	
-		return ((heap[rightChildIndex(index)] != null) || (rightChildIndex(index) < heap.length));
+		
+		if(this.rightChildIndex(index) > (this.heap.length - 1) || this.heap.length == 1)
+		{	
+			return false;
+		}
+		else if(this.heap[rightChildIndex(index)] == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
+	
 	
 	//swap exchanges entries at indices i and j
 	public void swap(int i, int j)
 	{
-		Entry temp = new Entry(heap[i].getKey(), heap[i].getValue());
-		heap[i].setKey(heap[j].getKey());
-		heap[i].setValue(heap[j].getValue());
-		heap[j].setKey(temp.getKey());
-		heap[j].setValue(temp.getValue());
+		Entry temp = new Entry(this.heap[i].getKey(), this.heap[i].getValue());
+		this.heap[i].setKey(this.heap[j].getKey());
+		this.heap[i].setValue(this.heap[j].getValue());
+		this.heap[j].setKey(temp.getKey());
+		this.heap[j].setValue(temp.getValue());
 	}
 	
 	//upheap swaps entry at index "index" higher up the branch as needed 
@@ -222,19 +254,20 @@ public class HeapPriorityQueue
 				{
 					childToSwapIndex = rightIndex;
 				}
-				//if the child to swap has an equal or higher(if minheap) or lower (if maxheap)
-				//value to the entry at index "index," exit while loop.
-				if((this.heapType == HeapType.MIN && heap[index].getKey() <= heap[childToSwapIndex].getKey())
-					|| (this.heapType == HeapType.MAX && heap[index].getKey() >= heap[childToSwapIndex].getKey()))
-				{
-					break;
-				}
-				//otherwise, swap entry at index "index" with child to swap
-				swap(childToSwapIndex, index);
-				index = childToSwapIndex;
+			}
+			//if the child to swap has an equal or higher(if minheap) or lower (if maxheap)
+			//value to the entry at index "index," exit while loop.
+			if((this.heapType == HeapType.MIN && heap[index].getKey() <= heap[childToSwapIndex].getKey())
+				|| (this.heapType == HeapType.MAX && heap[index].getKey() >= heap[childToSwapIndex].getKey()))
+			{
+				break;
+			}
+			//otherwise, swap entry at index "index" with child to swap
+			swap(childToSwapIndex, index);
+			index = childToSwapIndex;
+				
 			}
 		}
-	}
 	
 	//***methods specified by assignment
 	
@@ -332,8 +365,4 @@ public class HeapPriorityQueue
 		return i;
 	}
 	
-	public String heapTypeToString()
-	{
-		return "heap type is " + this.heapType;
-	}
 }

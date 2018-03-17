@@ -1,6 +1,4 @@
-
-public enum HeapType {
-
+public enum HeapType
+{
 	MIN, MAX;
-	
 }
