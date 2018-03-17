@@ -1,8 +1,61 @@
 
-public class HeapPriorityQueue {
+public class HeapPriorityQueue 
+{
+	//inner class: entry
+		protected class Entry
+		{
+			
+			//variables:
+			private int key = 0;
+			private float value = 0;
+			
+			//constructor method:
+			protected Entry()
+			{
+				this.key = key;
+				this.value = value;
+			}
+			
+			protected Entry(int thisKey, float thisValue)
+			{
+				this.key = thisKey;
+				this.value = thisValue;
+			}
+			
+			//accessor methods:
+			public int getKey()
+			{
+				return this.key;
+			}
+			
+			public float getValue()
+			{
+				return this.value;
+			}
+
+			//mutator methods:
+			public void setKey(int thisKey)
+			{
+				this.key = thisKey;
+			}
+			
+			public void setValue(float thisValue)
+			{
+				this.value = thisValue;
+			}
+			
+			//toString method returns a statement including the key and value of an Entry
+			
+			public String toString()
+			{
+				return "This entry has key " + this.getKey() + "and value " + this.getValue() + ".";
+			}
+			
+			
+		}
 	
 	//variables:
-	private Entry[] heap = new Entry[0];
+	public Entry[] heap = new Entry[0];
 	private HeapType heapType = HeapType.MIN;
 	
 	//constructor methods:
@@ -12,12 +65,13 @@ public class HeapPriorityQueue {
 		this.heapType = heapType;
 	}
 	
-	public HeapPriorityQueue(int[] keyArray, float[]valueArray, HeapType thisHeapType)
+	public HeapPriorityQueue(int[] keyArray, float[] valueArray, HeapType thisHeapType)
 	{
 		this.heapType = thisHeapType;
+		this.heap = new Entry[keyArray.length];
 		for(int index = 0; index < Math.min(keyArray.length, valueArray.length); index++)
 		{
-			heap[index] = new Entry(keyArray[index], valueArray[index]);
+			this.heap[index] = new Entry(keyArray[index], valueArray[index]);
 		}
 		heapify();
 	}
@@ -25,7 +79,13 @@ public class HeapPriorityQueue {
 	//heapify sorts entire heap via downheap
 	public void heapify()
 	{
-		int initialIndex = parentIndex(heap.length-1);
+		int initialIndex = 0;
+		if(parentIndex(this.heap.length-1) > 0)
+		{
+			initialIndex = parentIndex(this.heap.length-1);
+		}
+		System.out.println("in heapify(), initialIndex is " + initialIndex 
+				+ "and the parent of this.heap.length is " + parentIndex(this.heap.length-1));
 		for(int i = initialIndex; i >= 0; i--)
 		{
 			downheap(i);
@@ -68,14 +128,27 @@ public class HeapPriorityQueue {
 	//false otherwise
 	public boolean hasLeftChild(int index)
 	{
-		return ((heap[leftChildIndex(index)] != null) && (leftChildIndex(index) < heap.length));
+		System.out.println("in hasLeftChild, leftChildIndex is " + this.leftChildIndex(index));
+		
+		if(this.leftChildIndex(index) > heap.length || heap.length == 1)
+		{
+			return false;
+		}
+		else if(this.heap[leftChildIndex(index)] == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	
 	//hasRightChild returns true if the entry at index "index" has a right child,
 	//false otherwise
 	public boolean hasRightChild(int index)
 	{	
-		return ((heap[rightChildIndex(index)] != null) && (rightChildIndex(index) < heap.length));
+		return ((heap[rightChildIndex(index)] != null) || (rightChildIndex(index) < heap.length));
 	}
 	
 	//swap exchanges entries at indices i and j
@@ -257,5 +330,10 @@ public class HeapPriorityQueue {
 			i++;
 		}
 		return i;
+	}
+	
+	public String heapTypeToString()
+	{
+		return "heap type is " + this.heapType;
 	}
 }
