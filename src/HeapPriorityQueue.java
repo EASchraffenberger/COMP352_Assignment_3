@@ -47,7 +47,7 @@ public class HeapPriorityQueue
 			
 			public String toString()
 			{
-				return "This entry has key " + this.getKey() + "and value " + this.getValue() + ".";
+				return "key = " + this.getKey() + ", value = " + this.getValue() + ".";
 			}
 			
 			
@@ -79,9 +79,9 @@ public class HeapPriorityQueue
 	//from index 0 to the last index
 	public void printHeap()
 	{
-		System.out.println("key     value");
+		System.out.println("Key     Value");
 		
-		for(int i = 0; i < this.heap.length; i++)
+		for(int i = 0; i <= this.getLastEntryIndex(); i++)
 		{
 			System.out.println(this.heap[i].getKey() + "     " + this.heap[i].getValue());
 		}
@@ -103,11 +103,13 @@ public class HeapPriorityQueue
 	//the second half empty.
 	public void increaseHeapSize(Entry[] oldHeap)
 	{
-		Entry[] temp = new Entry[2*oldHeap.length];
+		Entry[] temp = new Entry[2*(oldHeap.length-1)];
 		//enter current heap values in new heap
-		for(int i = 0; i <= oldHeap.length; i++)
-		{
-			temp[i] = oldHeap[i];
+		for(int i = 0; i < oldHeap.length; i++)
+		{	
+			int tempKey = oldHeap[i].getKey();
+			float tempValue = oldHeap[i].getValue();
+			temp[i] = new Entry(tempKey, tempValue);
 		}
 		//redefine current heap to be newly constructed heap
 		oldHeap = temp;
@@ -124,6 +126,18 @@ public class HeapPriorityQueue
 		{
 			return false;
 		}
+	}
+	
+	//getLastEntryIndex returns the index of the last non-null entry in a partially
+	//filled heap, going backwards from the final entry
+	public int getLastEntryIndex()
+	{
+		int i = this.heap.length - 1;
+		while(this.heap[i] == null)
+		{
+			i--;
+		}
+		return i;
 	}
 	
 	//parentIndex method returns index of parent of entry at index "index"
@@ -199,8 +213,10 @@ public class HeapPriorityQueue
 	{
 		while(index > 0)
 		{
+			int indexKey = this.heap[index].getKey();
 			int p = parentIndex(index);
-			if(heap[index].getKey() == heap[p].getKey())
+			int pKey = this.heap[parentIndex(index)].getKey();
+			if(indexKey == pKey)
 			{
 				break;
 			}
@@ -208,7 +224,7 @@ public class HeapPriorityQueue
 			{
 				case MIN:
 				{	
-					if(heap[index].getKey() < heap[p].getKey())
+					if(indexKey < pKey)
 					{
 						swap(index, p);
 						index = p;
@@ -218,7 +234,7 @@ public class HeapPriorityQueue
 				
 				case MAX:
 				{
-					if(heap[index].getKey() > heap[p].getKey())
+					if(indexKey > pKey)
 					{
 						swap(index, p);
 						index = p;
@@ -292,13 +308,13 @@ public class HeapPriorityQueue
 	{
 		Entry newEntry = new Entry(k,v);
 		//increase size of array if array is full
-		if (heap[heap.length-1] != null)
+		if (this.isFull())
 		{
 			increaseHeapSize(this.heap);
 		}
-		heap[heap.length] = newEntry;
+		heap[this.getLastEntryIndex()] = newEntry;
 		//restore heap order via upheap
-		upheap(heap.length);
+		upheap(this.getLastEntryIndex());
 	}
 	
 
@@ -351,18 +367,27 @@ public class HeapPriorityQueue
 	//isEmpty returns true if heap is empty, false otherwise
 	public boolean isEmpty()
 	{
-		return (this.size() == 0);
+		if(this.heap[0] == null)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	//size returns number of Entries in heap
 	public int size()
 	{
-		int i =0;
-		while(heap[i] != null)
+		if(this.isFull())
 		{
-			i++;
+			return (this.heap.length);
 		}
-		return i;
+		else
+		{
+			return (this.getLastEntryIndex() + 1);
+		}
 	}
 	
 }

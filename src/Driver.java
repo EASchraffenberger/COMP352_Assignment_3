@@ -11,7 +11,7 @@ public class Driver {
 		}
 	}
 	
-	public static void priorityHeapMethodDemo(int[] keyArray, float[] valueArray, HeapPriorityQueue thisHeap)
+	public static void priorityHeapMethodDemo(int[] keyArray, float[] valueArray, HeapPriorityQueue thisHeap, Random randomGenerator)
 	{
 		System.out.println("Key and value arrays before heapifying:");
 		System.out.println("Key     Value");
@@ -20,14 +20,34 @@ public class Driver {
 			System.out.println(keyArray[i] + "     " + valueArray[i]);
 		}
 		System.out.println();
+		System.out.println("Testing required method: isEmpty()");
+		System.out.println("Is heap empty? " + thisHeap.isEmpty());
+		System.out.println("Testing required method: size(): ");
 		System.out.println("Size of heap: " + thisHeap.size());
 		System.out.println("Heap in minHeap order:");
-		System.out.println("Key     Value");
 		thisHeap.printHeap();
+		System.out.println("Testing required method: top()");
+		System.out.println("Top of heap is " + thisHeap.top());
+		System.out.println("Testing required methods: toggle() and switchToMax():");
 		System.out.println("Now swapping heaptype:");
 		thisHeap.toggle();
+		System.out.println("Testing required method: state()");
 		System.out.println("Now re-heapifying with heapType " + thisHeap.state());
 		thisHeap.heapify();
+		thisHeap.printHeap();
+		System.out.println("Now testing required method: insert()");
+		int insertKey = randomGenerator.nextInt(15);
+		float insertValue = (float)(randomGenerator.nextInt(9) + randomGenerator.nextDouble() + randomGenerator.nextDouble()/10);
+		System.out.println("Inserting using key " + insertKey + " and value " + insertValue);
+		thisHeap.insert(insertKey, insertValue);
+		thisHeap.printHeap();
+		System.out.println("Testing required method: switchToMin():");
+		thisHeap.switchToMin();
+		System.out.println("Now re-heapifying with heapType " + thisHeap.state());
+		thisHeap.heapify();
+		thisHeap.printHeap();
+		System.out.println("Now testing required method: Remove()");
+		thisHeap.remove();
 		thisHeap.printHeap();
 	}
 	
@@ -43,8 +63,12 @@ public class Driver {
 		float[] valueArray = new float[arrayLength];
 		createEntryVariableArrays(keyArray, valueArray, arrayLength, randomGenerator);
 		HeapPriorityQueue thisHeap = new HeapPriorityQueue(keyArray, valueArray, HeapType.MIN);
-		priorityHeapMethodDemo(keyArray, valueArray, thisHeap);
-		
+		for(int i = 0; i < 10; i++)
+		{
+			
+		System.out.println("***NOW RUNNING TEST #" + i + "***");
+		priorityHeapMethodDemo(keyArray, valueArray, thisHeap, randomGenerator);
+		}
 		
 		
 	}
