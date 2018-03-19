@@ -91,7 +91,7 @@ public class HeapPriorityQueue
 	//heapify sorts entire heap via downheap
 	public void heapify()
 	{
-		int initialIndex = parentIndex(this.heap.length-1);	
+		int initialIndex = parentIndex(this.getLastEntryIndex());
 		while(initialIndex >= 0)
 		{
 			downheap(initialIndex);
@@ -101,18 +101,25 @@ public class HeapPriorityQueue
 	
 	//increaseHeapSize creates a new heap that has length 2* prior heap's length,
 	//the second half empty.
-	public void increaseHeapSize(Entry[] oldHeap)
+	public void increaseHeapSize(HeapPriorityQueue oldHeap)
 	{
-		Entry[] temp = new Entry[2*(oldHeap.length-1)];
+		HeapPriorityQueue temp = new HeapPriorityQueue();
+		temp.heap = new Entry[2*(oldHeap.heap.length)];
+		temp.heapType = oldHeap.heapType;
 		//enter current heap values in new heap
-		for(int i = 0; i < oldHeap.length; i++)
+		for(int i = 0; i < oldHeap.heap.length; i++)
 		{	
-			int tempKey = oldHeap[i].getKey();
-			float tempValue = oldHeap[i].getValue();
-			temp[i] = new Entry(tempKey, tempValue);
+			int tempKey = oldHeap.heap[i].getKey();
+			float tempValue = oldHeap.heap[i].getValue();
+			temp.heap[i] = new Entry(tempKey, tempValue);
+		}
+		//initialize remainder of temp heap with default entry variables
+		for(int i =oldHeap.heap.length; i < temp.heap.length; i++)
+		{
+			temp.heap[i] = new Entry();
 		}
 		//redefine current heap to be newly constructed heap
-		oldHeap = temp;
+		oldHeap.heap = temp.heap;
 	}
 	
 	//isFull returns true if the last entry in the heap is not null, false otherwise
@@ -133,11 +140,14 @@ public class HeapPriorityQueue
 	public int getLastEntryIndex()
 	{
 		int i = this.heap.length - 1;
-		while(this.heap[i] == null)
+		//System.out.println("In getLastEntryIndex method, i is " + i);
+		while((this.heap[i].getKey() == 0) && (this.heap[i].getValue() == 0))
 		{
+		//	System.out.println("In while loop of getLastEntryIndex, i is " + i + ", heap[i].getKey() is " 
+		//+ this.heap[i].getKey() + ", and heap[i].getValue is() " + heap[i].getValue());
 			i--;
 		}
-		return i;
+		return (i);
 	}
 	
 	//parentIndex method returns index of parent of entry at index "index"
@@ -163,11 +173,11 @@ public class HeapPriorityQueue
 	public boolean hasLeftChild(int index)
 	{
 		
-		if(this.leftChildIndex(index) > (this.heap.length -1) || heap.length == 1)
+		if(this.leftChildIndex(index) > (this.getLastEntryIndex()) || heap.length == 1)
 		{
 			return false;
 		}
-		else if(this.heap[leftChildIndex(index)] == null)
+		else if(this.isEmpty())
 		{
 			return false;
 		}
@@ -182,11 +192,11 @@ public class HeapPriorityQueue
 	public boolean hasRightChild(int index)
 	{	
 		
-		if(this.rightChildIndex(index) > (this.heap.length - 1) || this.heap.length == 1)
+		if(this.rightChildIndex(index) > (this.getLastEntryIndex()) || this.heap.length == 1)
 		{	
 			return false;
 		}
-		else if(this.heap[rightChildIndex(index)] == null)
+		else if(this.isEmpty())
 		{
 			return false;
 		}
@@ -252,7 +262,7 @@ public class HeapPriorityQueue
 	public void downheap(int index)
 	{
 		while(hasLeftChild(index))
-		{
+		{	
 			int leftIndex = leftChildIndex(index);
 			int childToSwapIndex = leftIndex;
 			if(hasRightChild(index))
@@ -294,9 +304,10 @@ public class HeapPriorityQueue
 	{
 		Entry returnValue = new Entry(heap[0].getKey(), heap[0].getValue());
 		//swap root of heap with last entry
-		swap(0, heap.length-1);
+		swap(0, this.getLastEntryIndex());
 		//delete last Entry;
-		heap[heap.length - 1] = null;
+		heap[this.getLastEntryIndex()].setKey(0);
+		heap[this.getLastEntryIndex()].setValue(0);
 		//restore heap order using downheap method
 		downheap(0);
 		return returnValue;
@@ -310,11 +321,16 @@ public class HeapPriorityQueue
 		//increase size of array if array is full
 		if (this.isFull())
 		{
-			increaseHeapSize(this.heap);
+			increaseHeapSize(this);
 		}
-		heap[this.getLastEntryIndex()] = newEntry;
+		int insertIndex = (this.getLastEntryIndex() + 1);
+		System.out.println("In insert method, insertIndex is " + insertIndex);
+		this.heap[insertIndex].setKey(newEntry.getKey());
+		this.heap[insertIndex].setValue(newEntry.getValue());
+		System.out.println("In Insert method, after setting new entry's values, key is " + this.heap[insertIndex].getKey()
+				+ " and value is " + this.heap[insertIndex].getValue()); 
 		//restore heap order via upheap
-		upheap(this.getLastEntryIndex());
+		upheap(insertIndex);
 	}
 	
 
@@ -367,7 +383,7 @@ public class HeapPriorityQueue
 	//isEmpty returns true if heap is empty, false otherwise
 	public boolean isEmpty()
 	{
-		if(this.heap[0] == null)
+		if(this == null || this.heap[0] == null)
 		{
 			return true;
 		}

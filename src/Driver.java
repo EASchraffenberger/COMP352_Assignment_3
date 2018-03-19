@@ -40,6 +40,7 @@ public class Driver {
 		float insertValue = (float)(randomGenerator.nextInt(9) + randomGenerator.nextDouble() + randomGenerator.nextDouble()/10);
 		System.out.println("Inserting using key " + insertKey + " and value " + insertValue);
 		thisHeap.insert(insertKey, insertValue);
+		System.out.println("New heap after restoring heap order with upheap method:");
 		thisHeap.printHeap();
 		System.out.println("Testing required method: switchToMin():");
 		thisHeap.switchToMin();
@@ -63,10 +64,10 @@ public class Driver {
 		float[] valueArray = new float[arrayLength];
 		createEntryVariableArrays(keyArray, valueArray, arrayLength, randomGenerator);
 		HeapPriorityQueue thisHeap = new HeapPriorityQueue(keyArray, valueArray, HeapType.MIN);
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 1; i++)
 		{
 			
-		System.out.println("***NOW RUNNING TEST #" + i + "***");
+		System.out.println("***NOW RUNNING TEST #" + (i + 1) + "***");
 		priorityHeapMethodDemo(keyArray, valueArray, thisHeap, randomGenerator);
 		}
 		
